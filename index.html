@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUNAVEK — LED Facial Mask</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Didot&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ================= RESET ================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ================= THEME ================= */
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --card: #ffffff;
+      --border: rgba(0,0,0,0.08);
+    }
+
+    body.dark {
+      --bg: #1b1b1b;
+      --text: #ffffff;
+      --muted: #bbbbbb;
+      --card: #222222;
+      --border: rgba(255,255,255,0.12);
+    }
+
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background .3s, color .3s;
+      min-height: 100vh;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+
+    /* ================= HEADER ================= */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1800px;
+      margin: auto;
+      padding: 16px 22px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    /* LEFT NAV (DESKTOP) */
+    .nav-left {
+      display: flex;
+      gap: 34px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .nav-left a {
+      color: var(--text);
+      opacity: .85;
+      transition: .25s;
+      position: relative;
+    }
+
+    .nav-left a:hover { opacity: 1; }
+
+    .nav-left a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--text);
+      transition: .25s;
+    }
+
+    .nav-left a:hover::after { width: 100%; }
+
+    /* LOGO */
+    .logo {
+      justify-self: center;
+      text-align: center;
+      cursor: pointer;
+      line-height: 1.1;
+    }
+
+    .logo-main {
+      font-family: "Didot", "Playfair Display", serif;
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: .32em;
+    }
+
+    .logo-sub {
+      margin-top: 2px;
+      font-size: 10px;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* RIGHT ACTIONS */
+    .header-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text);
+      cursor: pointer;
+      transition: .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover { opacity: .7; }
+
+    /* LANGUAGE DROPDOWN */
+    .lang-wrapper { position: relative; }
+
+    .flag-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .lang-menu {
+      position: absolute;
+      right: 0;
+      top: 130%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.2);
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      z-index: 300;
+    }
+
+    .lang-menu.active { display: flex; }
+
+    .lang-menu button {
+      background: none;
+      border: none;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      color: var(--text);
+      border-radius: 8px;
+      transition: .2s;
+    }
+
+    .lang-menu button:hover {
+      background: rgba(0,0,0,.06);
+    }
+
+    body.dark .lang-menu button:hover {
+      background: rgba(255,255,255,.08);
+    }
+
+    /* MOBILE MENU BUTTON */
+    .menu-btn { display: none; }
+
+    /* ================= MOBILE DRAWER ================= */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 300px;
+      height: 100vh;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      transition: .35s ease;
+      z-index: 250;
+    }
+
+    .mobile-menu.active { left: 0; }
+
+    .mobile-top {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .mobile-logo {
+      text-align: center;
+      font-family: "Didot", serif;
+      font-size: 22px;
+      letter-spacing: .28em;
+      cursor: pointer;
+    }
+
+    .mobile-menu a {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .mobile-actions {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: .3s;
+      z-index: 220;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ================= HERO ================= */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    /* subtle bottom-left gradient for readability */
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 55%;
+      background: linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: absolute;
+      left: 70px;
+      bottom: 70px;
+      max-width: 560px;
+      text-align: left;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: .28em;
+      font-weight: 700;
+      margin-bottom: 18px;
+      opacity: .9;
+    }
+
+    .hero h1 {
+      font-size: 46px;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      color: #eaeaea;
+      max-width: 520px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-start;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      padding: 14px 34px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.7);
+      color: #ffffff;
+      padding: 14px 34px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.12);
+    }
+
+    /* ================= WHY LUNAVEK ================= */
+    .why-section {
+      max-width: 1280px;
+      margin: auto;
+      padding: 110px 22px 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 120px;
+    }
+
+    .why-title {
+      text-align: center;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .why-subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 720px;
+      margin: 0 auto 80px;
+    }
+
+    .why-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .why-row.reverse {
+      direction: rtl;
+    }
+
+    .why-row.reverse > * {
+      direction: ltr;
+    }
+
+    .why-image {
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,.25);
+    }
+
+    .why-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .why-content h3 {
+      font-size: 28px;
+      margin-bottom: 18px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .why-content p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 1024px) {
+      .why-row { grid-template-columns: 1fr; gap: 50px; }
+      .why-row.reverse { direction: ltr; }
+    }
+
+    @media (max-width: 820px) {
+      .nav-left { display: none; }
+      .menu-btn { display: inline-flex; }
+
+    .logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }  
+
+      .header-inner {
+        grid-template-columns: auto 1fr auto;
+      }
+
+      /* hide theme toggle in header on mobile */
+      .theme-btn { display: none; }
+
+      .hero-content {
+        left: 50%;
+        bottom: 60px;
+        transform: translateX(-50%);
+        text-align: center;
+        max-width: 90%;
+      }
+
+      .hero::after {
+        height: 65%;
+      }
+
+      .hero-buttons {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hero h1 { font-size: 30px; }
+      .hero p { font-size: 15px; }
+    }
+
+    /* ================= RTL ================= */
+    html[dir="rtl"] { direction: rtl; }
+
+    html[dir="rtl"] .lang-menu {
+      right: auto;
+      left: 0;
+    }
+
+    html[dir="rtl"] .mobile-menu {
+      left: auto;
+      right: -100%;
+      border-right: none;
+      border-left: 1px solid var(--border);
+    }
+
+    html[dir="rtl"] .mobile-menu.active {
+      right: 0;
+    }
+  </style>
+</head>
+<body class="dark">
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="header-inner">
+
+    <!-- LEFT (MENU BUTTON ON MOBILE) -->
+    <button class="icon-btn menu-btn" onclick="toggleMenu()" aria-label="Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- LEFT NAV (DESKTOP) -->
+    <nav class="nav-left">
+      <a href="#" data-i18n="about">About Us</a>
+      <a href="#" data-i18n="learn">Learn</a>
+    </nav>
+
+    <!-- LOGO CENTER -->
+    <div class="logo" onclick="goHome()">
+      <span class="logo-main">LUNAVEK</span>
+      <div class="logo-sub">Glow Mask</div>
+    </div>
+
+    <!-- RIGHT ACTIONS -->
+    <div class="header-actions">
+
+      <!-- LANGUAGE -->
+      <div class="lang-wrapper">
+        <button class="flag-btn" onclick="toggleLangMenu()" id="flagBtn">🇺🇸</button>
+        <div class="lang-menu" id="langMenu">
+          <button onclick="setLang('en')">🇺🇸 English</button>
+          <button onclick="setLang('fr')">🇫🇷 Français</button>
+          <button onclick="setLang('ar')">🇸🇦 العربية</button>
+        </div>
+      </div>
+
+      <!-- CART -->
+      <button class="icon-btn" aria-label="Cart">
+        <i class="fa-solid fa-bag-shopping"></i>
+      </button>
+
+      <!-- THEME (DESKTOP ONLY) -->
+      <button class="icon-btn theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+    </div>
+
+  </div>
+</header>
+
+<!-- ================= MOBILE MENU ================= -->
+<div class="mobile-menu" id="mobileMenu">
+
+  <div class="mobile-top">
+    <button class="icon-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mobile-logo" onclick="goHome()">LUNAVEK</div>
+    <button class="icon-btn"><i class="fa-solid fa-bag-shopping"></i></button>
+  </div>
+
+  <a href="#" onclick="goHome()" data-i18n="home">Home</a>
+  <a href="#" data-i18n="about">About Us</a>
+  <a href="#" data-i18n="learn">Learn</a>
+
+  <div class="mobile-actions">
+    <div class="lang-wrapper">
+      <button class="flag-btn" onclick="toggleLangMenuMobile()" id="flagBtnMobile">🇺🇸</button>
+      <div class="lang-menu" id="langMenuMobile">
+        <button onclick="setLang('en')">🇺🇸 English</button>
+        <button onclick="setLang('fr')">🇫🇷 Français</button>
+        <button onclick="setLang('ar')">🇸🇦 العربية</button>
+      </div>
+    </div>
+
+    <!-- THEME BUTTON ONLY IN MOBILE MENU -->
+    <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b2?auto=format&fit=crop&w=1600&q=80" alt="LED Facial Mask">
+
+  <div class="hero-content">
+    <span class="hero-badge" data-i18n="badge">BESTSELLER 2026</span>
+    <h1 data-i18n="heroTitle">Professional LED Facial Mask</h1>
+    <p data-i18n="heroDesc">
+      Advanced light therapy technology to reduce acne, smooth wrinkles, and restore your skin’s natural glow — at home.
+    </p>
+
+    <div class="hero-buttons">
+      <button class="btn-primary" data-i18n="shopNow">Shop Now</button>
+      <button class="btn-secondary" data-i18n="learnMore">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY LUNAVEK ================= -->
+<section class="why-section">
+  <div>
+    <h2 class="why-title" data-i18n="whyTitle">Why LUNAVEK</h2>
+    <p class="why-subtitle" data-i18n="whySub">Clinical-grade light therapy engineered for visible skin transformation — safely, comfortably, and from the comfort of your home.</p>
+  </div>
+
+  <!-- ROW 1 -->
+  <div class="why-row">
+    <div class="why-image">
+      <img src="" alt="LED therapy">
+    </div>
+    <div class="why-content">
+      <h3 data-i18n="w1Title">Advanced Multi-Spectrum LED Therapy</h3>
+      <p data-i18n="w1Desc1">LUNAVEK uses clinically researched wavelengths of red, blue, near-infrared, and amber light to target multiple skin concerns at the cellular level. Each light spectrum penetrates the skin at different depths, helping stimulate collagen production, calm inflammation, destroy acne-causing bacteria, and accelerate natural skin repair.</p>
+      <p data-i18n="w1Desc2">Unlike surface treatments, LED light therapy works beneath the skin barrier — improving texture, tone, and clarity over time with consistent, non-invasive use.</p>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="why-row reverse">
+    <div class="why-image">
+      <img src="https://images.unsplash.com/photo-1606813909238-6ad37b6dca5f?auto=format&fit=crop&w=1200&q=80" alt="Dermatologist approved">
+    </div>
+    <div class="why-content">
+      <h3 data-i18n="w2Title">Dermatologist-Inspired Safety & Comfort</h3>
+      <p data-i18n="w2Desc1">Every LUNAVEK mask is engineered with medical-grade silicone and precision LED calibration to ensure consistent light output without overheating or discomfort. The soft, flexible structure contours naturally to your face, allowing for even coverage across all treatment zones.</p>
+      <p data-i18n="w2Desc2">Designed for daily use, LUNAVEK delivers professional-grade results while remaining gentle enough for sensitive skin — no downtime, no irritation, and no harsh chemicals.</p>
+    </div>
+  </div>
+
+  <!-- ROW 3 -->
+  <div class="why-row">
+    <div class="why-image">
+      <img src="" alt="Fast results">
+    </div>
+    <div class="why-content">
+      <h3 data-i18n="w3Title">Visible Results in Just Minutes a Day</h3>
+      <p data-i18n="w3Desc1">With treatment sessions lasting only 10 minutes, LUNAVEK seamlessly integrates into your daily routine — whether you're winding down at night or multitasking during self-care. Consistent use helps reduce breakouts, soften fine lines, even skin tone, and restore natural radiance.</p>
+      <p data-i18n="w3Desc2">Over time, skin appears firmer, clearer, and more luminous — delivering clinic-level performance from the comfort of home.</p>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  /* ================= THEME ================= */
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+  }
+
+  /* ================= MENU ================= */
+  const menu = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('overlay');
+
+  function toggleMenu() {
+    menu.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+
+  /* ================= LANGUAGE ================= */
+  const langMenu = document.getElementById('langMenu');
+  const langMenuMobile = document.getElementById('langMenuMobile');
+  const flagBtn = document.getElementById('flagBtn');
+  const flagBtnMobile = document.getElementById('flagBtnMobile');
+
+  function toggleLangMenu() {
+    langMenu.classList.toggle('active');
+  }
+
+  function toggleLangMenuMobile() {
+    langMenuMobile.classList.toggle('active');
+  }
+
+  const translations = {
+    en: {
+      home: "Home",
+      learn: "Learn",
+      about: "About Us",
+      badge: "BESTSELLER 2026",
+      heroTitle: "Professional LED Facial Mask",
+      heroDesc: "Advanced light therapy technology to reduce acne, smooth wrinkles, and restore your skin’s natural glow — at home.",
+      shopNow: "Shop Now",
+      learnMore: "Learn More",
+      whyTitle: "Why LUNAVEK",
+      whySub: "Clinical-grade light therapy engineered for visible skin transformation — safely, comfortably, and from the comfort of your home.",
+      w1Title: "Advanced Multi-Spectrum LED Therapy",
+      w1Desc1: "LUNAVEK uses clinically researched wavelengths of red, blue, near-infrared, and amber light to target multiple skin concerns at the cellular level. Each light spectrum penetrates the skin at different depths, helping stimulate collagen production, calm inflammation, destroy acne-causing bacteria, and accelerate natural skin repair.",
+      w1Desc2: "Unlike surface treatments, LED light therapy works beneath the skin barrier — improving texture, tone, and clarity over time with consistent, non-invasive use.",
+      w2Title: "Dermatologist-Inspired Safety & Comfort",
+      w2Desc1: "Every LUNAVEK mask is engineered with medical-grade silicone and precision LED calibration to ensure consistent light output without overheating or discomfort. The soft, flexible structure contours naturally to your face, allowing for even coverage across all treatment zones.",
+      w2Desc2: "Designed for daily use, LUNAVEK delivers professional-grade results while remaining gentle enough for sensitive skin — no downtime, no irritation, and no harsh chemicals.",
+      w3Title: "Visible Results in Just Minutes a Day",
+      w3Desc1: "With treatment sessions lasting only 10 minutes, LUNAVEK seamlessly integrates into your daily routine — whether you're winding down at night or multitasking during self-care. Consistent use helps reduce breakouts, soften fine lines, even skin tone, and restore natural radiance.",
+      w3Desc2: "Over time, skin appears firmer, clearer, and more luminous — delivering clinic-level performance from the comfort of home."
+    },
+    fr: {
+      home: "Accueil",
+      learn: "Découvrir",
+      about: "À propos",
+      badge: "BEST-SELLER 2026",
+      heroTitle: "Masque Facial LED Professionnel",
+      heroDesc: "Technologie avancée de luminothérapie pour réduire l'acné, lisser les rides et restaurer l'éclat naturel de votre peau — à domicile.",
+      shopNow: "Acheter",
+      learnMore: "En savoir plus",
+      whyTitle: "Pourquoi LUNAVEK",
+      whySub: "Technologie de luminothérapie de qualité clinique pour une transformation visible de la peau — en toute sécurité et confortablement depuis chez vous.",
+      w1Title: "Thérapie LED multi-spectre avancée",
+      w1Desc1: "LUNAVEK utilise des longueurs d’onde cliniquement étudiées — rouge, bleu, proche infrarouge et ambre — pour cibler plusieurs problèmes cutanés au niveau cellulaire. Chaque spectre pénètre à différentes profondeurs pour stimuler le collagène, apaiser l’inflammation et combattre les bactéries responsables de l’acné.",
+      w1Desc2: "Contrairement aux soins de surface, la luminothérapie agit sous la barrière cutanée pour améliorer durablement la texture, le teint et la clarté.",
+      w2Title: "Sécurité et confort inspirés des dermatologues",
+      w2Desc1: "Chaque masque LUNAVEK est conçu avec du silicone de qualité médicale et un calibrage LED précis pour offrir une lumière homogène sans surchauffe ni inconfort. Sa structure souple épouse naturellement le visage pour une couverture optimale.",
+      w2Desc2: "Conçu pour un usage quotidien, LUNAVEK offre des résultats professionnels tout en restant suffisamment doux pour les peaux sensibles — sans irritation ni temps de récupération.",
+      w3Title: "Des résultats visibles en quelques minutes par jour",
+      w3Desc1: "Avec des séances de seulement 10 minutes, LUNAVEK s’intègre parfaitement à votre routine quotidienne. Une utilisation régulière aide à réduire les imperfections, lisser les rides et uniformiser le teint.",
+      w3Desc2: "Au fil du temps, la peau paraît plus ferme, plus nette et plus lumineuse — avec des performances dignes d’un institut depuis chez vous."
+    },
+    ar: {
+      home: "الرئيسية",
+      learn: "تعرف أكثر",
+      about: "من نحن",
+      badge: "الأكثر مبيعًا 2026",
+      heroTitle: "قناع LED احترافي للوجه",
+      heroDesc: "تقنية العلاج الضوئي المتقدمة لتقليل حب الشباب وتنعيم التجاعيد واستعادة نضارة البشرة في المنزل.",
+      shopNow: "تسوق الآن",
+      learnMore: "اعرف المزيد",
+      whyTitle: "لماذا لونافيك",
+      whySub: "تقنية علاج ضوئي بمستوى طبي لتحسين ملمس البشرة بشكل واضح — بأمان وراحة من منزلك.",
+      w1Title: "علاج LED متعدد الأطياف المتقدم",
+      w1Desc1: "تستخدم لونافيك أطوالًا موجية مدروسة طبيًا مثل الأحمر والأزرق وتحت الأحمر والعنبر لاستهداف مشكلات البشرة على المستوى الخلوي. كل طيف يخترق الجلد بعمق مختلف لتحفيز الكولاجين وتقليل الالتهاب وقتل البكتيريا المسببة لحب الشباب.",
+      w1Desc2: "على عكس العلاجات السطحية، يعمل العلاج الضوئي أسفل حاجز الجلد لتحسين الملمس واللون والنقاء مع الاستخدام المنتظم.",
+      w2Title: "أمان وراحة مستوحاة من أطباء الجلد",
+      w2Desc1: "تم تصميم كل قناع لونافيك باستخدام سيليكون طبي ومعايرة دقيقة للـ LED لضمان توزيع الضوء بشكل متوازن دون حرارة أو انزعاج. تصميمه المرن ينسجم مع ملامح الوجه لتغطية كاملة.",
+      w2Desc2: "مصمم للاستخدام اليومي، يوفر لونافيك نتائج احترافية مع الحفاظ على لطفه للبشرة الحساسة — بدون تهيج أو فترة تعافٍ.",
+      w3Title: "نتائج مرئية خلال دقائق يوميًا",
+      w3Desc1: "بجلسات علاج لا تتجاوز 10 دقائق، يندمج لونافيك بسهولة في روتينك اليومي. يساعد الاستخدام المنتظم على تقليل الحبوب وتنعيم الخطوط الدقيقة وتوحيد لون البشرة.",
+      w3Desc2: "مع الوقت، تبدو البشرة أكثر تماسكًا وصفاءً وإشراقًا — بأداء يعادل العيادات من راحة منزلك."
+    }
+  };
+
+  function setLang(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      el.textContent = translations[lang][key];
+    });
+
+    if (lang === 'ar') {
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
+      flagBtn.textContent = '🇸🇦';
+      flagBtnMobile.textContent = '🇸🇦';
+    } else if (lang === 'fr') {
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'fr';
+      flagBtn.textContent = '🇫🇷';
+      flagBtnMobile.textContent = '🇫🇷';
+    } else {
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
+      flagBtn.textContent = '🇺🇸';
+      flagBtnMobile.textContent = '🇺🇸';
+    }
+
+    langMenu.classList.remove('active');
+    langMenuMobile.classList.remove('active');
+  }
+
+  /* ================= HOME ================= */
+  function goHome() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toggleMenu();
+  }
+</script>
+
+</body>
+</html>
